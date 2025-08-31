@@ -47,7 +47,7 @@ visual-product-matcher/
 ```bash
 git clone https://github.com/JanardanTripathi/Visual-Product-Matcher.git
 cd Visual-Product-Matcher
-2. Setup Backend
+**### 2. Setup Backend**
 bash
 Copy code
 cd server
@@ -55,8 +55,7 @@ npm install
 npm run dev       # Run server locally on http://localhost:5000
 Proxy endpoint: /proxy?url=IMAGE_URL
 Example: http://localhost:5000/proxy?url=https://example.com/image.jpg
-
-3. Setup Frontend
+**3. Setup Frontend**
 bash
 Copy code
 cd ../client
@@ -64,18 +63,18 @@ npm install
 npm start         # Runs frontend locally on http://localhost:3000
 Frontend automatically calls backend proxy when using image URLs.
 
-🚀 Production Deployment
-Backend
+**🚀 Production Deployment**
+**Backend**
 Navigate to the server folder.
 
 Deploy the server (e.g., on Render) with server.js as entry point.
 
 Backend URL in production: https://visual-product-matcher-ttqw.onrender.com
 
-Frontend
+**Frontend**
 Navigate to the client folder.
 
-Build frontend:
+git push origin main
 
 bash
 Copy code
@@ -89,14 +88,14 @@ Copy code
 const imageUrl = "https://visual-product-matcher-ttqw.onrender.com/proxy?url=EXTERNAL_IMAGE_URL";
 This ensures CORS-safe image fetching in production.
 
-⚙️ Configuration
+**⚙️ Configuration**
 products.json contains product metadata (id, name, thumbnail, etc.).
 
 Features for products are computed on-the-fly when first requested.
 
 Minimum similarity threshold can be adjusted via the slider in the UI.
 
-📝 Notes
+**📝 Notes**
 Use only direct image URLs (images must be publicly accessible).
 
 Frontend handles errors like:
@@ -109,7 +108,7 @@ No matches found
 
 Backend ensures the /proxy endpoint only returns valid images.
 
-🛠 Tech Stack
+**🛠 Tech Stack**
 Frontend: ReactJS, CSS, HTML
 
 Backend: Node.js, Express
@@ -118,10 +117,9 @@ Machine Learning: TensorFlow.js, MobileNet
 
 Deployment: Render (both frontend and backend)
 
-💡 Tips
+**💡 Tips**
 Always test image URLs in backend /proxy endpoint first.
 
 Adjust similarity threshold to refine search results.
 
 Keep product catalog updated in products.json.
-
