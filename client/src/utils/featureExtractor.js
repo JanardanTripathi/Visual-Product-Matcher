@@ -7,7 +7,7 @@ let model = null;
 // Proxy helper for external URLs
 function proxifyUrl(url) {
   if (url.startsWith("http")) {
-    return `http://localhost:5000/proxy?url=${encodeURIComponent(url)}`;
+    return `https://visual-product-matcher-ttqw.onrender.com/proxy?url=${encodeURIComponent(url)}`;
   }
   return url; // local path or blob
 }
