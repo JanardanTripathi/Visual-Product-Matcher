@@ -12,6 +12,8 @@ function App() {
   const [minScore, setMinScore] = useState(0.0);
   const [error, setError] = useState(null);
 
+  const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:5000";
+
   // Load products from JSON
   useEffect(() => {
     setLoading(true);
@@ -72,12 +74,34 @@ function App() {
         setMatched(results.sort((a, b) => b.score - a.score));
       } catch (err) {
         console.error("Matching error:", err);
-        setError("Could not process the selected image.");
+        setError("Could not process the selected image. Make sure the URL is valid or file is correct.");
       } finally {
         setLoading(false);
       }
     })();
   }, [queryImage, products]);
+
+  // Handle file upload
+  const handleFileUpload = (file) => {
+    if (!file.type.startsWith("image/")) {
+      setError("Invalid file type. Please upload an image (JPG, PNG, WEBP).");
+      return;
+    }
+    setError(null);
+    setQueryImage(URL.createObjectURL(file));
+  };
+
+  // Handle URL input
+  const handleUrlInput = (url) => {
+    if (!url || !/^https?:\/\//i.test(url)) {
+      setError("Invalid URL. Please enter a valid image link.");
+      return;
+    }
+    setError(null);
+    // Route URL through backend proxy
+    const proxiedUrl = `${API_BASE}/proxy?url=${encodeURIComponent(url.trim())}`;
+    setQueryImage(proxiedUrl);
+  };
 
   // Decide what to display
   const results = queryImage
@@ -88,7 +112,10 @@ function App() {
     <div className="container">
       <h1>Visual Product Matcher</h1>
 
-      <UploadArea onImageSelected={setQueryImage} />
+      <UploadArea
+        onImageSelected={handleFileUpload}
+        onUrlEntered={handleUrlInput}
+      />
 
       {queryImage && (
         <div className="selected-image">
@@ -120,9 +147,7 @@ function App() {
         </div>
       )}
 
-      {error && !loading && (
-        <p className="error-message">{error}</p>
-      )}
+      {error && !loading && <p className="error-message">{error}</p>}
 
       {!error && (
         <>

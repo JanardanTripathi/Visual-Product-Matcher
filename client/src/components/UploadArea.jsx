@@ -1,20 +1,22 @@
 import React, { useState } from "react";
 
-function UploadArea({ onImageSelected }) {
+function UploadArea({ onImageSelected, onUrlEntered }) {
   const [url, setUrl] = useState("");
 
+  // Handle local file selection
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onloadend = () => onImageSelected(reader.result);
+    reader.onloadend = () => onImageSelected(file); // pass File object
     reader.readAsDataURL(file);
   };
 
+  // Handle URL submission
   const handleUrlSubmit = (e) => {
     e.preventDefault();
-    if (url.trim()) {
-      onImageSelected(url.trim());
+    if (url.trim() && onUrlEntered) {
+      onUrlEntered(url.trim());
       setUrl("");
     }
   };
@@ -22,7 +24,7 @@ function UploadArea({ onImageSelected }) {
   return (
     <div style={styles.container}>
       <h3 style={{ marginBottom: "15px" }}>Upload an image or provide URL</h3>
-      
+
       <input
         type="file"
         accept="image/*"
@@ -38,7 +40,9 @@ function UploadArea({ onImageSelected }) {
           placeholder="Paste image URL"
           style={styles.input}
         />
-        <button type="submit" style={styles.button}>Upload URL</button>
+        <button type="submit" style={styles.button}>
+          Upload URL
+        </button>
       </form>
     </div>
   );
