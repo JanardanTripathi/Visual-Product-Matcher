@@ -4,10 +4,13 @@ import * as tf from "@tensorflow/tfjs";
 
 let model = null;
 
+// Base URL for backend proxy
+const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:5000";
+
 // Proxy helper for external URLs
 function proxifyUrl(url) {
   if (url.startsWith("http")) {
-    return `https://visual-product-matcher-ttqw.onrender.com/proxy?url=${encodeURIComponent(url)}`;
+    return `${API_BASE}/proxy?url=${encodeURIComponent(url)}`;
   }
   return url; // local path or blob
 }
@@ -29,7 +32,7 @@ export async function getFeature(image) {
     img.crossOrigin = "anonymous";
 
     if (typeof image === "string") {
-      img.src = proxifyUrl(image); // ✅ go through proxy if needed
+      img.src = proxifyUrl(image); // go through proxy if external URL
     } else {
       // File object
       img.src = URL.createObjectURL(image);

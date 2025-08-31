@@ -2,48 +2,68 @@ import React, { useState } from "react";
 
 function UploadArea({ onImageSelected, onUrlEntered }) {
   const [url, setUrl] = useState("");
+  const [urlError, setUrlError] = useState(null);
 
-  // Handle local file selection
+  // Handle file upload
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => onImageSelected(file); // pass File object
-    reader.readAsDataURL(file);
+
+    if (!file.type.startsWith("image/")) {
+      alert("Invalid file type. Please upload an image (JPG, PNG, WEBP).");
+      return;
+    }
+
+    onImageSelected(file);
+    setUrlError(null);
   };
 
   // Handle URL submission
   const handleUrlSubmit = (e) => {
     e.preventDefault();
-    if (url.trim() && onUrlEntered) {
-      onUrlEntered(url.trim());
-      setUrl("");
+    if (!url.trim() || !/^https?:\/\//i.test(url.trim())) {
+      setUrlError("Invalid URL. Please enter a valid image link.");
+      return;
     }
+
+    onUrlEntered(url.trim());
+    setUrl("");
+    setUrlError(null);
   };
 
   return (
     <div style={styles.container}>
-      <h3 style={{ marginBottom: "15px" }}>Upload an image or provide URL</h3>
+      <h3 style={{ marginBottom: "15px" }}>Upload an image or enter a URL</h3>
 
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleFileUpload}
-        style={styles.fileInput}
-      />
-
-      <form onSubmit={handleUrlSubmit} style={styles.urlForm}>
+      {/* File Upload Section */}
+      <div style={styles.section}>
+        <label style={styles.label}>Upload Image</label>
         <input
-          type="text"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="Paste image URL"
-          style={styles.input}
+          type="file"
+          accept="image/*"
+          onChange={handleFileUpload}
+          style={styles.fileInput}
         />
-        <button type="submit" style={styles.button}>
-          Upload URL
-        </button>
-      </form>
+        <p style={styles.hint}>Supported formats: JPG, PNG, WEBP</p>
+      </div>
+
+      {/* URL Input Section */}
+      <div style={styles.section}>
+        <label style={styles.label}>Image URL</label>
+        <form onSubmit={handleUrlSubmit} style={styles.urlForm}>
+          <input
+            type="text"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="Paste image URL here"
+            style={styles.input}
+          />
+          <button type="submit" style={styles.button}>
+            Submit
+          </button>
+        </form>
+        {urlError && <p style={styles.error}>{urlError}</p>}
+      </div>
     </div>
   );
 }
@@ -52,24 +72,34 @@ const styles = {
   container: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
     background: "#fff",
     padding: "20px",
     borderRadius: "12px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-    marginBottom: "20px",
-    maxWidth: "400px",
-    width: "90%",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
     margin: "20px auto",
+    maxWidth: "450px",
+  },
+  section: {
+    marginBottom: "20px",
+    display: "flex",
+    flexDirection: "column",
+  },
+  label: {
+    fontWeight: "bold",
+    marginBottom: "8px",
   },
   fileInput: {
-    marginBottom: "10px",
+    padding: "6px",
+  },
+  hint: {
+    fontSize: "12px",
+    color: "#666",
+    marginTop: "4px",
   },
   urlForm: {
     display: "flex",
     gap: "8px",
-    width: "100%",
+    flexDirection: "row",
   },
   input: {
     flex: 1,
@@ -84,6 +114,11 @@ const styles = {
     background: "#007bff",
     color: "#fff",
     cursor: "pointer",
+  },
+  error: {
+    color: "red",
+    fontSize: "13px",
+    marginTop: "5px",
   },
 };
 
