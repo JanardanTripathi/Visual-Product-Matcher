@@ -3,7 +3,7 @@ import cors from "cors";
 import fetch from "node-fetch";
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // Enable CORS for frontend
 app.use(cors());
@@ -28,8 +28,10 @@ app.get("/proxy", async (req, res) => {
       return res.status(400).json({ error: "The provided URL is not an image." });
     }
 
+    // ✅ Safer for Render: convert to Buffer instead of piping
+    const buffer = await response.arrayBuffer();
     res.setHeader("Content-Type", contentType);
-    response.body.pipe(res);
+    res.send(Buffer.from(buffer));
   } catch (err) {
     console.error("Proxy error:", err.message);
     res.status(500).json({ error: "Could not fetch the image." });
